@@ -19,11 +19,11 @@ Sander Kastelein
 ## Rollen
 * SCRUM Master - Sander
 * Product Owner - Ruud
-* Embeded
+* Embedded
  * Hardware Engineer 1 - Reinder
  * Hardware Engineer 2 - Benjamin
- * Embeded Software Engineer 1 - Reinder
- * Embeded Software Engineer 2 - Benjamin
+ * Embedded Software Engineer 1 - Reinder
+ * Embedded Software Engineer 2 - Benjamin
 * App
  * Software Engineer 1 - Ruud
  * Software Engineer 2 - Amir
