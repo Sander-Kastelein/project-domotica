@@ -20,7 +20,8 @@ Sander Kastelein
 * SCRUM Master - Sander
 * Product Owner - Ruud
 * Embeded
- * Hardware engineer - Reinder
+ * Hardware Engineer 1 - Reinder
+ * Hardware Engineer 2 - Benjamin
  * Embeded Software Engineer 1 - Reinder
  * Embeded Software Engineer 2 - Benjamin
 * App
@@ -28,7 +29,7 @@ Sander Kastelein
  * Software Engineer 2 - Amir
  * Desginer (Visueel) - Amir
 * Tester - Sander
-* Adviseur Embeded & App - Sander
+* Adviseur Embedded & App - Sander
 * Video
  * Editor - Reinder
  * Voice over - Ruud
