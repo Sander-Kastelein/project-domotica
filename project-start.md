@@ -17,17 +17,18 @@ Sander Kastelein
 
 
 ## Rollen
+* Notulist / Documentalist - Amir
 * SCRUM Master - Sander
 * Product Owner - Ruud
 * Embedded
  * Hardware Engineer 1 - Reinder
  * Hardware Engineer 2 - Benjamin
- * Embedded Software Engineer 1 - Reinder
- * Embedded Software Engineer 2 - Benjamin
+ * Embedded Software Engineer 1 - Benjamin
+ * Embedded Software Engineer 2 - Reinder
 * App
- * Software Engineer 1 - Ruud
- * Software Engineer 2 - Amir
- * Desginer (Visueel) - Amir
+ * Software Engineer 1 - Amir
+ * Software Engineer 2 - Ruud
+ * Designer (Visueel) - Amir
 * Tester - Sander
 * Adviseur Embedded & App - Sander
 * Video
@@ -35,3 +36,4 @@ Sander Kastelein
  * Voice over - Ruud
  * Writer - Sander
  * Camera man - (? camera-man opleiding) Benjamin
+* Groep Ambassadeur (voor project C) - Ruud
