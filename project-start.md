@@ -17,12 +17,20 @@ Sander Kastelein
 
 
 ## Rollen
-* SCRUM Master
-* Product Owner
+* SCRUM Master - Sander
+* Product Owner - Ruud
 * Embeded
- * Hardware engineer
- * Embeded Software Engineer
+ * Hardware engineer - Reinder
+ * Embeded Software Engineer 1 - Reinder
+ * Embeded Software Engineer 2 - Benjamin
 * App
- * Software Engineer
- * Desginer (Visueel)
-* Tester
+ * Software Engineer 1 - Ruud
+ * Software Engineer 2 - Amir
+ * Desginer (Visueel) - Amir
+* Tester - Sander
+* Adviseur Embeded & App - Sander
+* Video
+ * Editor - Reinder
+ * Voice over - Ruud
+ * Writer - Sander
+ * Camera man - (? camera-man opleiding) Benjamin
