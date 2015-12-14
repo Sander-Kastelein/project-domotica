@@ -20,9 +20,9 @@ Sander Kastelein
 * SCRUM Master
 * Product Owner
 * Embeded
-** Hardware engineer
-** Embeded Software Engineer
+ * Hardware engineer
+ * Embeded Software Engineer
 * App
-** Software Engineer
-** Desginer (Visueel)
+ * Software Engineer
+ * Desginer (Visueel)
 * Tester
