@@ -14,3 +14,15 @@ Sander Kastelein
 * Rollen Verdelen
 * Backlog maken
 * Sprint maken
+
+
+## Rollen
+* SCRUM Master
+* Product Owner
+* Embeded
+** Hardware engineer
+** Embeded Software Engineer
+* App
+** Software Engineer
+** Desginer (Visueel)
+* Tester
