@@ -2,11 +2,11 @@
 
 ## Team
 Groep 9
-Reinder Henstra
-Benjamin Safarizadeh
-Ruud Haertlein
-Amir Nicolai
-Sander Kastelein
+*Reinder Henstra
+*Benjamin Safarizadeh
+*Ruud Haertlein
+*Amir Nicolai
+*Sander Kastelein
 
 ## Opzet
 * Github opzetten
