@@ -22,11 +22,11 @@ Groep 9
 * Product Owner - Ruud
 * Embedded
  * Hardware Engineer 1 - Reinder
- * Hardware Engineer 2 - Benjamin
- * Embedded Software Engineer 1 - Benjamin
+ * Hardware Engineer 2 - Amir
+ * Embedded Software Engineer 1 - Amir
  * Embedded Software Engineer 2 - Reinder
 * App
- * Software Engineer 1 - Amir
+ * Software Engineer 1 - Benjamin
  * Software Engineer 2 - Ruud
  * Designer (Visueel) - Amir
 * Tester - Sander
