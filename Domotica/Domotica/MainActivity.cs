@@ -133,13 +133,25 @@ namespace Domotica
                 {
                     executeCommand("1");
                 };
-                ChangeRFState.Click += (sender, e) =>
+            }
+
+            if (ChangeRFState2 != null) // if button exists
+            {
+                ChangeRFState2.Click += (sender, e) =>
                 {
-                    executeCommand("0");
+                    executeCommand("2");
                 };
             }
 
-                    //Add the "Connect" button handler.
+            if (ChangeRFState3 != null) // if button exists
+            {
+                ChangeRFState3.Click += (sender, e) =>
+                {
+                    executeCommand("3");
+                };
+            }
+
+            //Add the "Connect" button handler.
             if (buttonConnect != null)  // if button exists
             {
                 buttonConnect.Click += (sender, e) =>
