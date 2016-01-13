@@ -2,6 +2,13 @@
 #include <RCSwitch.h>
 
 
+   //booleans
+
+   bool status1 = false;
+   bool status2 = false;
+   bool status3 = false;
+
+
 RCSwitch mySwitch = RCSwitch();
 
 #include <RemoteReceiver.h>
@@ -175,41 +182,53 @@ void executeCommand(char cmd)
             server.write(buf, 4);                             // response is always 4 chars (\n included)
             Serial.print("Sensor: "); Serial.println(buf);
             break;
-         case '0':
-                   sendRF(2379310);
-                break;
                 
          case '1':
+         if (status1 == false)
+         {
                    sendRF(2379311);
+                   status1 = !status1;
                 break;
-                
+         }
+
+         else {
+          sendRF(2379310);
+          status1 = !status1;
+
+          break;
+         }
+         
          case '2':
-                   sendRF(2379308);
-                break;
-                
-         case '3':
+         if (status1 == false)
+         {
                    sendRF(2379309);
+                   status1 = !status1;
                 break;
-                
-         case '4':
-                   sendRF(2379306);
-                break;
-                
-         case '5':
+         }
+
+         else {
+          sendRF(2379308);
+          status1 = !status1;
+
+          break;
+         }
+         
+         case '3':
+         if (status1 == false)
+         {
                    sendRF(2379307);
+                   status1 = !status1;
                 break;
+         }
+
+         else {
+          sendRF(2379306);
+          status1 = !status1;
+
+          break;
+         }
                 
-         case '6':
-                   sendRF(2379310);
-                break;
-                
-         case '7':
-                   sendRF(2379310);
-                break;
-                
-         case '8':
-                   sendRF(2379310);
-                break;
+         
                 
          case 's': // Report switch state to the app
             if (pinState) { server.write(" ON\n"); Serial.println("Pin state is ON"); }  // always send 4 chars
