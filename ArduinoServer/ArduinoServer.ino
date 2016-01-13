@@ -199,31 +199,31 @@ void executeCommand(char cmd)
          }
          
          case '2':
-         if (status1 == false)
+         if (status2 == false)
          {
                    sendRF(2379309);
-                   status1 = !status1;
+                   status2 = !status2;
                 break;
          }
 
          else {
           sendRF(2379308);
-          status1 = !status1;
+          status2 = !status2;
 
           break;
          }
          
          case '3':
-         if (status1 == false)
+         if (status3 == false)
          {
                    sendRF(2379307);
-                   status1 = !status1;
+                   status3 = !status3;
                 break;
          }
 
          else {
           sendRF(2379306);
-          status1 = !status1;
+          status3 = !status3;
 
           break;
          }
