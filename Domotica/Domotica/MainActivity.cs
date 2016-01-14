@@ -60,7 +60,7 @@ namespace Domotica
         // Controls on GUI
         Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3;
         Button buttonChangePinState;
-        TextView textViewServerConnect, textViewTimerStateValue;
+        TextView textViewServerConnect, textViewTimerStateValue, RFConnect;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, textViewRFConnectValue;
         EditText editTextIPAddress, editTextIPPort;
 
@@ -83,12 +83,13 @@ namespace Domotica
             ChangeRFState3 = FindViewById<Button>(Resource.Id.buttonChangeRFState3);
             buttonConnect = FindViewById<Button>(Resource.Id.buttonConnect);
             buttonChangePinState = FindViewById<Button>(Resource.Id.buttonChangePinState);
+            RFConnect = FindViewById<TextView>(Resource.Id.RFConnect);
             textViewTimerStateValue = FindViewById<TextView>(Resource.Id.textViewTimerStateValue);
             textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
             textViewChangePinStateValue = FindViewById<TextView>(Resource.Id.textViewChangePinStateValue);
             textViewSensorValue = FindViewById<TextView>(Resource.Id.textViewSensorValue);
             textViewDebugValue = FindViewById<TextView>(Resource.Id.textViewDebugValue);
-            textViewRFConnectValue = FindViewById<TextView>(Resource.Id.RFConnect); 
+            textViewRFConnectValue = FindViewById<TextView>(Resource.Id.RFConnect);
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
 
@@ -107,7 +108,7 @@ namespace Domotica
             timerClock = new System.Timers.Timer() { Interval = 1000, Enabled = true }; // Interval >= 1000
             timerClock.Elapsed += (obj, args) =>
             {
-                RunOnUiThread(() => { textViewTimerStateValue.Text = DateTime.Now.ToString("h:mm:ss"); }); 
+                RunOnUiThread(() => { textViewTimerStateValue.Text = DateTime.Now.ToString("h:mm:ss"); });
             };
 
             // timer object, check Arduino state
@@ -117,80 +118,123 @@ namespace Domotica
             {
                 //RunOnUiThread(() =>
                 //{
-                    if (socket != null) // only if socket exists
-                    {
-                        // Send a command to the Arduino server on every tick (loop though list)
-                        UpdateGUI(executeCommand(commandList[listIndex].Item1), commandList[listIndex].Item2);  //e.g. UpdateGUI(executeCommand("s"), textViewChangePinStateValue);
-                        if (++listIndex >= commandList.Count) listIndex = 0;
-                    }
-                    else timerSockets.Enabled = false;  // If socket broken -> disable timer
+                if (socket != null) // only if socket exists
+                {
+                    // Send a command to the Arduino server on every tick (loop though list)
+                    UpdateGUI(executeCommand(commandList[listIndex].Item1), commandList[listIndex].Item2);  //e.g. UpdateGUI(executeCommand("s"), textViewChangePinStateValue);
+                    if (++listIndex >= commandList.Count) listIndex = 0;
+                }
+                else timerSockets.Enabled = false;  // If socket broken -> disable timer
                 //});
             };
 
+// RF1,2,3 aan en uit Command
             if (ChangeRFState != null)  // if button exists
             {
+
                 ChangeRFState.Click += (sender, e) =>
                 {
-                    executeCommand("1");
+                    string RFConText = "Connect";  // default text
+                    bool butRFEnabled = true;      // default state
+                    Color color = Color.Red;
+                    string state = executeCommand("1");
+                    if (state == "AAN\n")
+                    {
+                        // Switch 1 staat aan.
+                        RFConText = "Connect";  // default text
+                        butRFEnabled = true;      // default state
+                        color = Color.Red;
+                    }
+                    else
+                    {
+                        // Switch 1 staat uit.
+                        RFConText = "Disconnect";
+                        color = Color.Green;
+                        butRFEnabled = true;
+                    }
+                    RunOnUiThread(() =>
+           {
+               if (RFConText != null)  // text exists
+               {
+                   RFConnect.Text = RFConText;
+                   RFConnect.SetTextColor(color);
+                   ChangeRFState.Enabled = butRFEnabled;
+               }
+           });
                 };
-            }
 
-            if (ChangeRFState2 != null) // if button exists
-            {
-                ChangeRFState2.Click += (sender, e) =>
+                if (ChangeRFState2 != null) // if button exists
                 {
-                    executeCommand("2");
-                };
-            }
+                    ChangeRFState2.Click += (sender, e) =>
+                    {
+                        string state = executeCommand("2");
+                        if (state == "AAN\n")
+                        {
+                        // Switch 2 staat aan.
+                    }
+                        else
+                        {
+                        // Switch 2 staat uit.
+                    }
+                    };
+                }
 
-            if (ChangeRFState3 != null) // if button exists
-            {
-                ChangeRFState3.Click += (sender, e) =>
+                if (ChangeRFState3 != null) // if button exists
                 {
-                    executeCommand("3");
-                };
-            }
+                    ChangeRFState3.Click += (sender, e) =>
+                    {
+                        string state = executeCommand("3");
+                        if (state == "AAN\n")
+                        {
+                        // Switch 3 staat aan.
+                    }
+                        else
+                        {
+                        // Switch 3 staat uit.
+                    }
+                    };
+                }
 
-            //Add the "Connect" button handler.
-            if (buttonConnect != null)  // if button exists
-            {
-                buttonConnect.Click += (sender, e) =>
+                //Add the "Connect" button handler.
+                if (buttonConnect != null)  // if button exists
                 {
+                    buttonConnect.Click += (sender, e) =>
+                    {
                     //Validate the user input (IP address and port)
                     if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
-                    {
-                        if (connector == null) // -> simple sockets
                         {
-                            ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
-                        }
-                        else // -> threaded sockets
+                            if (connector == null) // -> simple sockets
+                        {
+                                ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
+                            }
+                            else // -> threaded sockets
                         {
                             //Stop the thread If the Connector thread is already started.
                             if (connector.CheckStarted()) connector.StopConnector();
-                               connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
+                                connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
+                            }
                         }
-                    }
-                    else UpdateConnectionState(3, "Please check IP");
-                };
-            }
+                        else UpdateConnectionState(3, "Please check IP");
+                    };
+                }
 
-            //Add the "Change pin state" button handler.
-            if (buttonChangePinState != null)
-            {
-                buttonChangePinState.Click += (sender, e) =>
+                //Add the "Change pin state" button handler.
+                if (buttonChangePinState != null)
                 {
-                    if (connector == null) // -> simple sockets
+                    buttonChangePinState.Click += (sender, e) =>
                     {
-                        socket.Send(Encoding.ASCII.GetBytes("t"));                 // Send toggle-command to the Arduino
-                    }
-                    else // -> threaded sockets
+                        if (connector == null) // -> simple sockets
                     {
-                        if (connector.CheckStarted()) connector.SendMessage("t");  // Send toggle-command to the Arduino
+                            socket.Send(Encoding.ASCII.GetBytes("t"));                 // Send toggle-command to the Arduino
                     }
-                };
+                        else // -> threaded sockets
+                    {
+                            if (connector.CheckStarted()) connector.SendMessage("t");  // Send toggle-command to the Arduino
+                    }
+                    };
+                }
             }
         }
-
 
         //Send command to server and wait for response (blocking)
         //Method should only be called when socket existst
