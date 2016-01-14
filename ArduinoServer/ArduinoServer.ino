@@ -58,6 +58,7 @@ bool pinState = false;                   // Variable to store actual pin state
 bool pinChange = false;                  // Variable to store actual pin change
 int  sensorValue = 0;                    // Variable to store actual sensor value
 
+
 void setup()
 {
 	 //Init I/O-pins
@@ -106,26 +107,31 @@ void setup()
    int IPnr = getIPComputerNumberOffset(Ethernet.localIP(), offset);   // Get computernumber in local network 192.168.1.105 -> 5)
    Serial.print(" ["); Serial.print(IPnr); Serial.print("] "); 
    Serial.print("  [Testcase: telnet "); Serial.print(Ethernet.localIP()); Serial.print(" "); Serial.print(ethPort); Serial.println("]");
-   signalNumber(ledPin, IPnr);
+   
 
-   pinMode(10,OUTPUT);
    // Transmitter is connected to Arduino Pin #10 
    mySwitch.enableTransmit(10);
-   //mySwitch.setPulseLength(10000);
-   mySwitch.setRepeatTransmit(5);
+   mySwitch.setRepeatTransmit(2);
    // Optional set pulse length.
+   sendRF(2379297);
+   Serial.println("RF-clear SEND");
+   //turns of switches on start up
+ 
 }
+
+ 
 void sendRF(long code) //stuurt een betrouwbaarder rf signaal (verbetert resultaat)
 {
-  mySwitch.send(code, 24);
-  delay(175);
+  Serial.print("Sending code");
+  Serial.println(code);
+  
   mySwitch.send(code, 24);
   delay(175);
   mySwitch.send(code, 24);
   delay(175);
   mySwitch.send(code, 24);
 }
- 
+
 
 void loop()
 {
@@ -159,7 +165,7 @@ void loop()
 	  	{
 	  	   char inByte = ethernetClient.read();   // Get byte from the client.
 	  	   executeCommand(inByte);                // Wait for command to execute
-	   	   inByte = NULL;                         // Reset the read byte.
+	   	   //inByte = NULL;                         // Reset the read byte. (reset niet nodig, declaration + overwrite within same scope.)
 	    } 
    }
 	 Serial.println("Application disonnected");
@@ -183,53 +189,39 @@ void executeCommand(char cmd)
             Serial.print("Sensor: "); Serial.println(buf);
             break;
                 
-         case '1':
-         if (status1 == false)
-         {
-                   sendRF(2379311);
-                   status1 = !status1;
-                break;
-         }
-
-         else {
-          sendRF(2379310);
-          status1 = !status1;
-
-          break;
-         }
+         case '1': //Turns first RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+            status1 = !status1;
+            if(status1){
+              sendRF(2379311);
+              server.write("AAN\n"); 
+            }else{
+              sendRF(2379310);
+              server.write("UIT\n");
+            }
+            break;
+            
+         case '2': //Turns second RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+            status2 = !status2;
+            if(status2){
+              sendRF(2379309);
+              server.write("AAN\n"); 
+            }else{
+              sendRF(2379308);
+              server.write("UIT\n");
+            }
+            break;
          
-         case '2':
-         if (status2 == false)
-         {
-                   sendRF(2379309);
-                   status2 = !status2;
-                break;
-         }
-
-         else {
-          sendRF(2379308);
-          status2 = !status2;
-
-          break;
-         }
-         
-         case '3':
-         if (status3 == false)
-         {
-                   sendRF(2379307);
-                   status3 = !status3;
-                break;
-         }
-
-         else {
-          sendRF(2379306);
-          status3 = !status3;
-
-          break;
-         }
-                
-         
-                
+         case '3': //Turns third RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+            status3 = !status3;
+            if(status3){
+              sendRF(2379307);
+              server.write("AAN\n"); 
+            }else{
+              sendRF(2379306);
+              server.write("UIT\n");
+            }
+            break;
+           
          case 's': // Report switch state to the app
             if (pinState) { server.write(" ON\n"); Serial.println("Pin state is ON"); }  // always send 4 chars
             else { server.write("OFF\n"); Serial.println("Pin state is OFF"); }
