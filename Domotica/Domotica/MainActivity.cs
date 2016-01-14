@@ -134,22 +134,22 @@ namespace Domotica
 
                 ChangeRFState.Click += (sender, e) =>
                 {
-                    string RFConText = "Connect";  // default text
+                    string RFConText = "RF1 Disconnected";  // default text
                     bool butRFEnabled = true;      // default state
                     Color color = Color.Red;
                     string state = executeCommand("1");
                     if (state == "AAN\n")
                     {
                         // Switch 1 staat aan.
-                        RFConText = "Connect";  // default text
+                        RFConText = "Connected";  // default text
                         butRFEnabled = true;      // default state
-                        color = Color.Red;
+                        color = Color.Green;
                     }
-                    else
+                    else if (state == "UIT\n")
                     {
                         // Switch 1 staat uit.
-                        RFConText = "Disconnect";
-                        color = Color.Green;
+                        RFConText = "disconnected";
+                        color = Color.Red;
                         butRFEnabled = true;
                     }
                     RunOnUiThread(() =>
