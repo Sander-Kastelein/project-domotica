@@ -52,7 +52,7 @@ using System.Threading.Tasks;
 
 namespace Domotica
 {
-    [Activity(Label = "@string/application_name", MainLauncher = true, Icon = "@drawable/icon", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(Label = "@string/application_name", MainLauncher = true, Icon = "@drawable/icon2", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
 
     public class MainActivity : Activity
     {
@@ -60,7 +60,7 @@ namespace Domotica
         // Controls on GUI
         Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3;
         Button buttonChangePinState;
-        TextView textViewServerConnect, textViewTimerStateValue, RFConnect;
+        TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, textViewRFConnectValue;
         EditText editTextIPAddress, editTextIPPort;
 
@@ -84,11 +84,12 @@ namespace Domotica
             buttonConnect = FindViewById<Button>(Resource.Id.buttonConnect);
             buttonChangePinState = FindViewById<Button>(Resource.Id.buttonChangePinState);
             RFConnect = FindViewById<TextView>(Resource.Id.RFConnect);
+            RFConnect2 = FindViewById<TextView>(Resource.Id.RFConnect2);
+            RFConnect3 = FindViewById<TextView>(Resource.Id.RFConnect3);
             textViewTimerStateValue = FindViewById<TextView>(Resource.Id.textViewTimerStateValue);
             textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
             textViewChangePinStateValue = FindViewById<TextView>(Resource.Id.textViewChangePinStateValue);
             textViewSensorValue = FindViewById<TextView>(Resource.Id.textViewSensorValue);
-            textViewDebugValue = FindViewById<TextView>(Resource.Id.textViewDebugValue);
             textViewRFConnectValue = FindViewById<TextView>(Resource.Id.RFConnect);
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
@@ -128,7 +129,7 @@ namespace Domotica
                 //});
             };
 
-// RF1,2,3 aan en uit Command
+            // RF1 aan/uit
             if (ChangeRFState != null)  // if button exists
             {
 
@@ -138,14 +139,14 @@ namespace Domotica
                     bool butRFEnabled = true;      // default state
                     Color color = Color.Red;
                     string state = executeCommand("1");
-                    if (state == "AAN\n")
+                    if (state == "AAN")
                     {
                         // Switch 1 staat aan.
                         RFConText = "Connected";  // default text
                         butRFEnabled = true;      // default state
                         color = Color.Green;
                     }
-                    else if (state == "UIT\n")
+                    else if (state == "UIT")
                     {
                         // Switch 1 staat uit.
                         RFConText = "disconnected";
@@ -158,80 +159,115 @@ namespace Domotica
                {
                    RFConnect.Text = RFConText;
                    RFConnect.SetTextColor(color);
-                   ChangeRFState.Enabled = butRFEnabled;
                }
            });
                 };
 
+                // RF 2 aan/uit
                 if (ChangeRFState2 != null) // if button exists
                 {
                     ChangeRFState2.Click += (sender, e) =>
                     {
-                        string state = executeCommand("2");
-                        if (state == "AAN\n")
+                        string RFConText2 = "RF2 Disconnected";  // default text
+                        bool butRFEnabled = true;      // default state
+                        Color color = Color.Red;
+                        string state2 = executeCommand("2");
+                        if (state2 == "AAN")
                         {
-                        // Switch 2 staat aan.
-                    }
-                        else
-                        {
-                        // Switch 2 staat uit.
-                    }
-                    };
-                }
-
-                if (ChangeRFState3 != null) // if button exists
-                {
-                    ChangeRFState3.Click += (sender, e) =>
-                    {
-                        string state = executeCommand("3");
-                        if (state == "AAN\n")
-                        {
-                        // Switch 3 staat aan.
-                    }
-                        else
-                        {
-                        // Switch 3 staat uit.
-                    }
-                    };
-                }
-
-                //Add the "Connect" button handler.
-                if (buttonConnect != null)  // if button exists
-                {
-                    buttonConnect.Click += (sender, e) =>
-                    {
-                    //Validate the user input (IP address and port)
-                    if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
-                        {
-                            if (connector == null) // -> simple sockets
-                        {
-                                ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
-                            }
-                            else // -> threaded sockets
-                        {
-                            //Stop the thread If the Connector thread is already started.
-                            if (connector.CheckStarted()) connector.StopConnector();
-                                connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
-                            }
+                            // Switch 1 staat aan.
+                            RFConText2 = "Connected";  // default text
+                            butRFEnabled = true;      // default state
+                            color = Color.Green;
                         }
-                        else UpdateConnectionState(3, "Please check IP");
+                        else if (state2 == "UIT")
+                        {
+                            // Switch 1 staat uit.
+                            RFConText2 = "disconnected";
+                            color = Color.Red;
+                            butRFEnabled = true;
+                        }
+                        RunOnUiThread(() =>
+                        {
+                            if (RFConText2 != null)  // text exists
+                            {
+                                RFConnect2.Text = RFConText2;
+                                RFConnect2.SetTextColor(color);
+                            }
+                        });
                     };
-                }
 
-                //Add the "Change pin state" button handler.
-                if (buttonChangePinState != null)
-                {
-                    buttonChangePinState.Click += (sender, e) =>
+                    // RF3 aan/uit
+                    if (ChangeRFState3 != null) // if button exists
                     {
-                        if (connector == null) // -> simple sockets
-                    {
-                            socket.Send(Encoding.ASCII.GetBytes("t"));                 // Send toggle-command to the Arduino
+                        ChangeRFState3.Click += (sender, e) =>
+                        {
+                            string RFConText3 = "RF3 Disconnected";  // default text
+                            bool butRFEnabled = true;               // default state -- DEZE REGEL KAN ER MISS UIT
+                            Color color = Color.Red;                // default color
+                            string state3 = executeCommand("3");     // state is send string an received string
+                            if (state3 == "AAN")                     // is the received string == "Aan"
+                            {
+                                // Switch 3 staat aan.
+                                RFConText3 = "Connected";                // default text when rf3 is on
+                                butRFEnabled = true;                    // default state when rf3 is on -- DEZE REGEL KAN ER MISS UIT
+                                color = Color.Green;                    // make the color green
+                            }
+                            else if (state3 == "UIT")
+                            {
+                                // Switch 3 staat uit.
+                                RFConText3 = "disconnected";             // Default text when rf3 is off
+                                color = Color.Red;                  // Make the color green
+                                butRFEnabled = true;                // Default state when rf3 is off -- DEZE REGEL KAN ER MISS UIT 
+                            }
+                            RunOnUiThread(() =>                     // Run this on the User Interface thread (functie)
+                            {
+                                if (RFConText3 != null)              // text exists
+                                {
+                                    RFConnect3.Text = RFConText3;    // replace the current text with the new text from if statement "AAN" || "UIT"
+                                    RFConnect3.SetTextColor(color); // change the color of the new text in the color of the if statement "AAN" || "UIT"
+                                }
+                            });
+                        };
+
+                        //Add the "Connect" button handler.
+                        if (buttonConnect != null)  // if button exists
+                        {
+                            buttonConnect.Click += (sender, e) =>
+                            {
+                                //Validate the user input (IP address and port)
+                                if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
+                                {
+                                    if (connector == null) // -> simple sockets
+                                    {
+                                        ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
+                                    }
+                                    else // -> threaded sockets
+                                    {
+                                        //Stop the thread If the Connector thread is already started.
+                                        if (connector.CheckStarted()) connector.StopConnector();
+                                        connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
+                                    }
+                                }
+                                else UpdateConnectionState(3, "Please check IP");
+                            };
+                        }
+
+                        //Add the "Change pin state" button handler.
+                        if (buttonChangePinState != null)
+                        {
+                            buttonChangePinState.Click += (sender, e) =>
+                            {
+                                if (connector == null) // -> simple sockets
+                                {
+                                    socket.Send(Encoding.ASCII.GetBytes("t"));                 // Send toggle-command to the Arduino
+                                }
+                                else // -> threaded sockets
+                                {
+                                    if (connector.CheckStarted()) connector.SendMessage("t");  // Send toggle-command to the Arduino
+                                }
+                            };
+                        }
                     }
-                        else // -> threaded sockets
-                    {
-                            if (connector.CheckStarted()) connector.SendMessage("t");  // Send toggle-command to the Arduino
-                    }
-                    };
                 }
             }
         }

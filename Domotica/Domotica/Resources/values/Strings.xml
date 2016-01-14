@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="application_name">Arduino Controller</string>
+  <string name="application_name">DomoticaProject - Groep 9</string>
   <string name="timer_state_text">Time</string>
   <string name="timer_state_value">OFF</string>
   <string name="arduino_server_text">Arduino server</string>
   <string name="arduino_server_connect">Not connected</string>
   <string name="ip_address_text">IP Address</string>
-  <string name="ip_address_value">192.168.3.102</string>
+  <string name="ip_address_value">192.168.3.10</string>
   <string name="ip_port_text">IP Port</string>
   <string name="ip_port_value">3300</string>
   <string name="button_connect_text">Connect</string>
   <string name="button_pin_state_text">Change State</string>
   <string name="pin_state_text">Arduino Pin state</string>
   <string name="change_pin_state_value">OFF</string>
-  <string name="sensor_text">Sensor value</string>
-  <string name="sensor_value">-</string>
+  <string name="sensor_text">Light sensor</string>
+  <string name="sensor_value">NO value</string>
   <string name="sensor_text2">Sensor value 2</string>
-  <string name="sensor_value2">-</string>
-  <string name="debug_text">Debug</string>
-  <string name="debug_value">-</string>
+  <string name="sensor_value2">NO Value</string>
+
   <string name="exit">Exit</string>
   <string name="abort">Abort</string>
-  <string name="buttonChangeRFState">RF1 Status</string>
-  <string name="buttonChangeRFState2">RF2 Status</string>
-  <string name="buttonChangeRFState3">RF3 Status</string>
-  <string name="RFConnect">RF Disconnected</string>
+  <string name="buttonChangeRFState"> Connect RF1 </string>
+  <string name="buttonChangeRFState2">Connect RF2</string>
+  <string name="buttonChangeRFState3">Connect RF3</string>
+  <string name="RFConnect">RF1 Disconnected</string>
   <string name="RFConnect2">RF2 Disconnected</string>
   <string name="RFConnect3">RF3 Disconnected</string>
 </resources>
