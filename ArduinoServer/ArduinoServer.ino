@@ -55,10 +55,12 @@ int ethPort = 3300;                                  // Take a free port (check 
 EthernetServer server(ethPort);              // EthernetServer instance (listening on port <ethPort>).
 ActionTransmitter actionTransmitter(RFPin);  // Intantiate a new ActionTransmitter remote, old model, use pin <RFPin>
 
-bool pinState = false;                    // Variable to store actual pin state
-bool pinChange = false;                   // Variable to store actual pin change
-int  sensorValue  = 0;                    // Variable to store actual lightsensor value
-int  sensorValue2 = 0;                    // Variable to store actual temperaturesensor value
+bool pinState        = false;            // Variable to store actual pin state
+bool pinChange       = false;            // Variable to store actual pin change
+int  sensorValue     = 0;                // Variable to store actual lightsensor value
+int  sensorValue2    = 0;                // Variable to store actual temperaturesensor value
+int  thresholdValue  = 10;               // Value of the lightsensor at which we decide to turn a switch off in some later situations
+int  thresholdValue2 = 35;               // Value of the lightsensor at which we decide to turn a switch on in some later situations
 
 void setup()
 {
@@ -148,6 +150,11 @@ void loop()
 	 Serial.println("Application connected");
    digitalWrite(ledPin, LOW);
 
+
+        
+   sendRF(2379297);
+
+      
    // Do what needs to be done while the socket is connected.
 	 while (ethernetClient.connected()) 
 	 {
@@ -157,6 +164,17 @@ void loop()
 
       sensorValue2 = readSensor(1, 100); 
       Serial.print("TemperatureSensor Value: "); Serial.println(sensorValue2);
+
+      if(sensorValue <= thresholdValue) {
+         sendRF(2379310);
+         status1 = !status1;
+      }
+      if(sensorValue >= thresholdValue2){
+         sendRF(2379311);
+         status1 = !status1; 
+      }
+
+
       
 	    // Activate pin based op pinState
 	    if (pinChange) {
