@@ -110,7 +110,8 @@ void setup()
    
 
    // Transmitter is connected to Arduino Pin #10 
-   mySwitch.enableTransmit(10);
+   mySwitch.enableTransmit(RFPin 
+   );
    mySwitch.setRepeatTransmit(2);
    // Optional set pulse length.
    sendRF(2379297);
@@ -151,6 +152,7 @@ void loop()
 	 {
       checkEvent(switchPin, pinState);
       sensorValue = readSensor(0, 100); 
+      Serial.print("Sensor Value: "); Serial.println(sensorValue);
         
 	    // Activate pin based op pinState
 	    if (pinChange) {
@@ -168,7 +170,7 @@ void loop()
 	   	   //inByte = NULL;                         // Reset the read byte. (reset niet nodig, declaration + overwrite within same scope.)
 	    } 
    }
-	 Serial.println("Application disonnected");
+	 Serial.println("Application disconnected");
 }
 
 
@@ -221,6 +223,9 @@ void executeCommand(char cmd)
               server.write("UIT\n");
             }
             break;
+
+        // case 'l': //Sends Sensor value towards the application user
+         //    server.write(sensorValue"/n")
            
          case 's': // Report switch state to the app
             if (pinState) { server.write(" ON\n"); Serial.println("Pin state is ON"); }  // always send 4 chars
