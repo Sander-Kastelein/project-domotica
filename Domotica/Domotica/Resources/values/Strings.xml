@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="application_name">DomoticaProject - Groep 9</string>
+  <string name="application_name">Domotica - Groep 9</string>
   <string name="timer_state_text">Time</string>
   <string name="timer_state_value">OFF</string>
   <string name="arduino_server_text">Arduino server</string>
@@ -12,18 +12,20 @@
   <string name="button_connect_text">Connect</string>
   <string name="button_pin_state_text">Change State</string>
   <string name="pin_state_text">Arduino Pin state</string>
-  <string name="change_pin_state_value">OFF</string>
+  <string name="change_pin_state_value">-</string>
   <string name="sensor_text">Light sensor</string>
-  <string name="sensor_value">NO value</string>
-  <string name="sensor_text2">Sensor value 2</string>
-  <string name="sensor_value2">NO Value</string>
+  <string name="sensor_value">-</string>
+  <string name="sensor_text2">Temperature sensor</string>
+  <string name="sensor_value2">-</string>
 
   <string name="exit">Exit</string>
   <string name="abort">Abort</string>
   <string name="buttonChangeRFState"> Connect RF1 </string>
   <string name="buttonChangeRFState2">Connect RF2</string>
   <string name="buttonChangeRFState3">Connect RF3</string>
-  <string name="RFConnect">RF1 Disconnected</string>
-  <string name="RFConnect2">RF2 Disconnected</string>
-  <string name="RFConnect3">RF3 Disconnected</string>
+  <string name="RFConnect">-</string>
+  <string name="RFConnect2">-</string>
+  <string name="RFConnect3">-</string>
+  <string name="Set_Timer">Set Time to activate ALL</string>
+  <string name="Edit_Set_Timer">00.00.00</string>
 </resources>

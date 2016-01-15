@@ -52,7 +52,7 @@ using System.Threading.Tasks;
 
 namespace Domotica
 {
-    [Activity(Label = "@string/application_name", MainLauncher = true, Icon = "@drawable/icon2", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
+    [Activity(Label = "@string/application_name", MainLauncher = true, Icon = "@drawable/Icon3", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
 
     public class MainActivity : Activity
     {
@@ -61,8 +61,8 @@ namespace Domotica
         Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3;
         Button buttonChangePinState;
         TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3;
-        public TextView textViewChangePinStateValue, textViewSensorValue, textViewDebugValue, textViewRFConnectValue;
-        EditText editTextIPAddress, editTextIPPort;
+        public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewRFConnectValue;
+        EditText editTextIPAddress, editTextIPPort, EditSetTimer;
 
         Timer timerClock, timerSockets;             // Timers   
         Socket socket = null;                       // Socket   
@@ -90,15 +90,18 @@ namespace Domotica
             textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
             textViewChangePinStateValue = FindViewById<TextView>(Resource.Id.textViewChangePinStateValue);
             textViewSensorValue = FindViewById<TextView>(Resource.Id.textViewSensorValue);
+            textViewSensorValue2 = FindViewById<TextView>(Resource.Id.textViewSensorValue2);
             textViewRFConnectValue = FindViewById<TextView>(Resource.Id.RFConnect);
             editTextIPAddress = FindViewById<EditText>(Resource.Id.editTextIPAddress);
             editTextIPPort = FindViewById<EditText>(Resource.Id.editTextIPPort);
+            EditSetTimer = FindViewById<EditText>(Resource.Id.EditSetTimer);
 
             UpdateConnectionState(4, "Disconnected");
 
             // Init commandlist, scheduled by socket timer
             commandList.Add(new Tuple<string, TextView>("s", textViewChangePinStateValue));
             commandList.Add(new Tuple<string, TextView>("a", textViewSensorValue));
+            commandList.Add(new Tuple<string, TextView>("b", textViewSensorValue2));
 
             // activation of connector -> threaded sockets otherwise -> simple sockets 
             // connector = new Connector(this);
@@ -109,7 +112,18 @@ namespace Domotica
             timerClock = new System.Timers.Timer() { Interval = 1000, Enabled = true }; // Interval >= 1000
             timerClock.Elapsed += (obj, args) =>
             {
-                RunOnUiThread(() => { textViewTimerStateValue.Text = DateTime.Now.ToString("h:mm:ss"); });
+                RunOnUiThread(() => {
+                    textViewTimerStateValue.Text = DateTime.Now.ToString("hh:mm:ss");
+
+                    string InsertTimerValue = Convert.ToString(EditSetTimer.Text).Replace(".",":");
+                    if (textViewTimerStateValue.Text == InsertTimerValue)
+                    {
+                        executeCommand("1");
+                        executeCommand("2");
+                        executeCommand("3");
+                    }
+
+                });
             };
 
             // timer object, check Arduino state
@@ -135,15 +149,13 @@ namespace Domotica
 
                 ChangeRFState.Click += (sender, e) =>
                 {
-                    string RFConText = "RF1 Disconnected";  // default text
-                    bool butRFEnabled = true;      // default state
+                    string RFConText = "No respons";  // default text
                     Color color = Color.Red;
                     string state = executeCommand("1");
                     if (state == "AAN")
                     {
                         // Switch 1 staat aan.
                         RFConText = "Connected";  // default text
-                        butRFEnabled = true;      // default state
                         color = Color.Green;
                     }
                     else if (state == "UIT")
@@ -151,7 +163,6 @@ namespace Domotica
                         // Switch 1 staat uit.
                         RFConText = "disconnected";
                         color = Color.Red;
-                        butRFEnabled = true;
                     }
                     RunOnUiThread(() =>
            {
@@ -168,15 +179,13 @@ namespace Domotica
                 {
                     ChangeRFState2.Click += (sender, e) =>
                     {
-                        string RFConText2 = "RF2 Disconnected";  // default text
-                        bool butRFEnabled = true;      // default state
+                        string RFConText2 = "No respons";  // default text
                         Color color = Color.Red;
                         string state2 = executeCommand("2");
                         if (state2 == "AAN")
                         {
                             // Switch 1 staat aan.
                             RFConText2 = "Connected";  // default text
-                            butRFEnabled = true;      // default state
                             color = Color.Green;
                         }
                         else if (state2 == "UIT")
@@ -184,7 +193,6 @@ namespace Domotica
                             // Switch 1 staat uit.
                             RFConText2 = "disconnected";
                             color = Color.Red;
-                            butRFEnabled = true;
                         }
                         RunOnUiThread(() =>
                         {
@@ -201,15 +209,13 @@ namespace Domotica
                     {
                         ChangeRFState3.Click += (sender, e) =>
                         {
-                            string RFConText3 = "RF3 Disconnected";  // default text
-                            bool butRFEnabled = true;               // default state -- DEZE REGEL KAN ER MISS UIT
+                            string RFConText3 = "No respons";  // default text
                             Color color = Color.Red;                // default color
                             string state3 = executeCommand("3");     // state is send string an received string
                             if (state3 == "AAN")                     // is the received string == "Aan"
                             {
                                 // Switch 3 staat aan.
                                 RFConText3 = "Connected";                // default text when rf3 is on
-                                butRFEnabled = true;                    // default state when rf3 is on -- DEZE REGEL KAN ER MISS UIT
                                 color = Color.Green;                    // make the color green
                             }
                             else if (state3 == "UIT")
@@ -217,7 +223,6 @@ namespace Domotica
                                 // Switch 3 staat uit.
                                 RFConText3 = "disconnected";             // Default text when rf3 is off
                                 color = Color.Red;                  // Make the color green
-                                butRFEnabled = true;                // Default state when rf3 is off -- DEZE REGEL KAN ER MISS UIT 
                             }
                             RunOnUiThread(() =>                     // Run this on the User Interface thread (functie)
                             {
@@ -351,7 +356,7 @@ namespace Domotica
             {
                 if (result == "OFF") textview.SetTextColor(Color.Red);
                 else if (result == " ON") textview.SetTextColor(Color.Green);
-                else textview.SetTextColor(Color.White);  
+                else textview.SetTextColor(Color.Green);  
                 textview.Text = result;
             });
         }

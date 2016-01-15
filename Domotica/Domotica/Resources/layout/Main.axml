@@ -7,218 +7,269 @@
     android:minHeight="25px"
     android:background="@drawable/bg4"
     android:padding="15dp">
-    <RelativeLayout
-        android:orientation="horizontal"
+    <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout1">
-        <TextView
-            android:text="@string/timer_state_text"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewTimerState"
-            android:layout_alignParentLeft="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginLeft="5dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/timer_state_value"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewTimerStateValue"
-            android:layout_alignParentRight="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/holo_blue_light" />
-        <TextView
-            android:text="@string/arduino_server_text"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewServer"
-            android:layout_below="@id/textViewTimerState"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="5dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/arduino_server_connect"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewServerConnect"
-            android:layout_below="@id/textViewTimerStateValue"
-            android:layout_alignParentRight="true"
-            android:textColor="@android:color/holo_red_dark" />
-        <TextView
-            android:text="@string/ip_address_text"
-            android:layout_width="150dp"
-            android:layout_height="20dp"
-            android:id="@+id/textViewIPAddress"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/textViewServer"
-            android:layout_marginLeft="5dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/ip_port_text"
-            android:layout_width="149dp"
-            android:layout_height="20dp"
-            android:id="@+id/textViewIPPort"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/textViewServerConnect"
-            android:textColor="@android:color/holo_blue_light" />
-        <EditText
-            android:layout_width="150dp"
+        android:id="@+id/Scrollview">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editTextIPAddress"
-            android:text="@string/ip_address_value"
-            android:lines="1"
-            android:minLines="1"
-            android:maxLines="1"
-            android:inputType="numberDecimal"
-            android:digits="0123456789."
-            android:layout_below="@id/textViewIPAddress"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/background_light" />
-        <EditText
-            android:layout_width="153dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/editTextIPPort"
-            android:text="@string/ip_port_value"
-            android:lines="1"
-            android:minLines="1"
-            android:maxLines="1"
-            android:inputType="numberDecimal"
-            android:digits="0123456789"
-            android:layout_below="@id/textViewIPPort"
-            android:layout_alignParentRight="true"
-            android:textColor="@android:color/holo_blue_light" />
-        <Button
-            android:text="@string/button_connect_text"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextIPAddress"
-            android:id="@+id/buttonConnect"
-            android:layout_alignParentLeft="true"
-            android:backgroundTint="#add8e6ff" />
-        <Button
-            android:text="@string/button_pin_state_text"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextIPPort"
-            android:id="@+id/buttonChangePinState"
-            android:layout_alignParentRight="true"
-            android:backgroundTint="#add8e6ff"
-            android:layout_width="153dp"
-            android:textColor="@android:color/holo_blue_light" />
-        <TextView
-            android:text="@string/pin_state_text"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewChangePinState"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/buttonConnect"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="50dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/change_pin_state_value"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewChangePinStateValue"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/buttonChangePinState"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginTop="50dp"
-            android:textColor="@android:color/holo_blue_light" />
-        <TextView
-            android:text="@string/sensor_text"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewSensor"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/textViewChangePinState"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginLeft="5dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/sensor_text2"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewSensor2"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/textViewSensor"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_marginLeft="5dp"
-            android:textColor="@android:color/background_light" />
-        <TextView
-            android:text="@string/sensor_value"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewSensorValue"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/textViewChangePinStateValue"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/holo_blue_light" />
-        <TextView
-            android:text="@string/sensor_value2"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/textViewSensorValue2"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/textViewSensorValue"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/holo_blue_light" />
-        <Button
-            android:text="@string/buttonChangeRFState"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/textViewSensorValue2"
-            android:id="@+id/buttonChangeRFState"
-            android:layout_alignParentLeft="true"
-            android:backgroundTint="#add8e6ff"
-            android:layout_marginTop="50dp" />
-        <TextView
-            android:text="@string/RFConnect"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:id="@+id/RFConnect"
-            android:layout_below="@id/textViewSensor2"
-            android:layout_alignParentRight="true"
-            android:textColor="@android:color/holo_red_dark"
-            android:layout_marginTop="62dp" />
-        <Button
-            android:text="@string/buttonChangeRFState2"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/buttonChangeRFState"
-            android:id="@+id/buttonChangeRFState2"
-            android:layout_alignParentLeft="true"
-            android:backgroundTint="#add8e6ff" />
-        <TextView
-            android:text="@string/RFConnect2"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:id="@+id/RFConnect2"
-            android:layout_below="@id/RFConnect"
-            android:layout_alignParentRight="true"
-            android:textColor="@android:color/holo_red_dark" />
-        <Button
-            android:text="@string/buttonChangeRFState3"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/buttonChangeRFState2"
-            android:id="@+id/buttonChangeRFState3"
-            android:layout_alignParentLeft="true"
-            android:backgroundTint="#add8e6ff" />
-        <TextView
-            android:text="@string/RFConnect3"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="150dp"
-            android:layout_height="30dp"
-            android:id="@+id/RFConnect3"
-            android:layout_below="@id/RFConnect2"
-            android:layout_alignParentRight="true"
-            android:textColor="@android:color/holo_red_dark" />
-    </RelativeLayout>
+            android:id="@+id/LinearLayout1">
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relativeLayout1">
+                <TextView
+                    android:text="@string/timer_state_text"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewTimerState"
+                    android:layout_alignParentLeft="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/timer_state_value"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewTimerStateValue"
+                    android:layout_alignParentRight="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/holo_blue_light" />
+                <TextView
+                    android:text="@string/arduino_server_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewServer"
+                    android:layout_below="@id/textViewTimerState"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/arduino_server_connect"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewServerConnect"
+                    android:layout_below="@id/textViewTimerStateValue"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_red_dark" />
+                <TextView
+                    android:text="@string/ip_address_text"
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/textViewIPAddress"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/textViewServer"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/ip_port_text"
+                    android:layout_width="149dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/textViewIPPort"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/textViewServerConnect"
+                    android:textColor="@android:color/holo_blue_light" />
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editTextIPAddress"
+                    android:text="@string/ip_address_value"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:maxLines="1"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789."
+                    android:layout_below="@id/textViewIPAddress"
+                    android:layout_alignParentLeft="true"
+                    android:textColor="@android:color/background_light" />
+                <EditText
+                    android:layout_width="153dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editTextIPPort"
+                    android:text="@string/ip_port_value"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:maxLines="1"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789"
+                    android:layout_below="@id/textViewIPPort"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:layout_marginRight="9dp" />
+                <Button
+                    android:text="@string/button_connect_text"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextIPAddress"
+                    android:id="@+id/buttonConnect"
+                    android:layout_alignParentLeft="true"
+                    android:backgroundTint="#ffffffff"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:background="@android:color/white" />
+                <Button xmlns:tools="http://schemas.android.com/tools"
+                    android:text="@string/button_pin_state_text"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextIPPort"
+                    android:id="@+id/buttonChangePinState"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="#00008bff"
+                    android:layout_width="153dp"
+                    android:textColor="@android:color/holo_blue_light"
+                    tools:visibility="visible"
+                    android:background="@android:color/holo_blue_dark" />
+                <TextView
+                    android:text="@string/pin_state_text"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewChangePinState"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/buttonConnect"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/change_pin_state_value"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewChangePinStateValue"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/buttonChangePinState"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@android:color/holo_blue_light" />
+                <TextView
+                    android:text="@string/sensor_text"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewSensor"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/textViewChangePinState"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/sensor_text2"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/textViewSensor2"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/textViewSensor"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <TextView
+                    android:text="@string/sensor_value"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/textViewSensorValue"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/textViewChangePinStateValue"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/holo_blue_light" />
+                <TextView
+                    android:text="@string/sensor_value2"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/textViewSensorValue2"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/textViewSensorValue"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/holo_blue_light" />
+                <TextView
+                    android:text="@string/Set_Timer"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/SetTimer"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/textViewSensor2"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@android:color/background_light" />
+                <EditText
+                    android:layout_width="153dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/EditSetTimer"
+                    android:text="@string/Edit_Set_Timer"
+                    android:lines="1"
+                    android:minLines="1"
+                    android:maxLines="1"
+                    android:inputType="numberDecimal"
+                    android:digits="0123456789.:"
+                    android:layout_below="@id/textViewSensorValue2"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="9dp" />
+                <Button
+                    android:text="@string/buttonChangeRFState"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/SetTimer"
+                    android:id="@+id/buttonChangeRFState"
+                    android:layout_alignParentLeft="true"
+                    android:backgroundTint="#ffffffff"
+                    android:layout_marginTop="15dp"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:background="@android:color/white" />
+                <TextView
+                    android:text="@string/RFConnect"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/RFConnect"
+                    android:layout_below="@id/EditSetTimer"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:layout_marginTop="19dp" />
+                <Button
+                    android:text="@string/buttonChangeRFState2"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/buttonChangeRFState"
+                    android:id="@+id/buttonChangeRFState2"
+                    android:layout_alignParentLeft="true"
+                    android:backgroundTint="#ffffffff"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:background="@android:color/white"
+                    android:layout_marginTop="10dp" />
+                <TextView
+                    android:text="@string/RFConnect2"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/RFConnect2"
+                    android:layout_below="@id/RFConnect"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:layout_marginTop="10dp" />
+                <Button
+                    android:text="@string/buttonChangeRFState3"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/buttonChangeRFState2"
+                    android:id="@+id/buttonChangeRFState3"
+                    android:layout_alignParentLeft="true"
+                    android:backgroundTint="#ffffffff"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:background="@android:color/white"
+                    android:layout_marginTop="10dp" />
+                <TextView
+                    android:text="@string/RFConnect3"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_width="150dp"
+                    android:layout_height="30dp"
+                    android:id="@+id/RFConnect3"
+                    android:layout_below="@id/RFConnect2"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@android:color/holo_blue_dark"
+                    android:layout_marginTop="10dp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
