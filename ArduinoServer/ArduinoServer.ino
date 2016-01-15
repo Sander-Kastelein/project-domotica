@@ -49,15 +49,16 @@ int ethPort = 3300;                                  // Take a free port (check 
 #define switchPin    7  // input, connected to some kind of inputswitch
 #define ledPin       8  // output, led used for "connect state": blinking = searching; continuously = connected
 #define infoPin      9  // output, more information
-#define analogPin    0  // sensor value
+#define analogPin    0  // sensor value (lightsensor)
+#define analogPin    1  // Sensor value (Teamperature sensor)
 
 EthernetServer server(ethPort);              // EthernetServer instance (listening on port <ethPort>).
 ActionTransmitter actionTransmitter(RFPin);  // Intantiate a new ActionTransmitter remote, old model, use pin <RFPin>
 
-bool pinState = false;                   // Variable to store actual pin state
-bool pinChange = false;                  // Variable to store actual pin change
-int  sensorValue = 0;                    // Variable to store actual sensor value
-
+bool pinState = false;                    // Variable to store actual pin state
+bool pinChange = false;                   // Variable to store actual pin change
+int  sensorValue  = 0;                    // Variable to store actual lightsensor value
+int  sensorValue2 = 0;                    // Variable to store actual temperaturesensor value
 
 void setup()
 {
@@ -152,8 +153,11 @@ void loop()
 	 {
       checkEvent(switchPin, pinState);
       sensorValue = readSensor(0, 100); 
-      Serial.print("Sensor Value: "); Serial.println(sensorValue);
-        
+      Serial.print("LightSensor Value: "); Serial.println(sensorValue);
+
+      sensorValue2 = readSensor(1, 100); 
+      Serial.print("TemperatureSensor Value: "); Serial.println(sensorValue2);
+      
 	    // Activate pin based op pinState
 	    if (pinChange) {
 	       if (pinState) { digitalWrite(ledPin, HIGH); actionTransmitter.sendSignal(31,'A',true); }
@@ -185,10 +189,16 @@ void executeCommand(char cmd)
          // Command protocol
          Serial.print("["); Serial.print(cmd); Serial.print("] -> ");
          switch (cmd) {
-         case 'a': // Report sensor value to the app  
+         case 'a': // Report lightsensor value to the app  
             intToCharBuf(sensorValue, buf, 4);                // convert to charbuffer
             server.write(buf, 4);                             // response is always 4 chars (\n included)
-            Serial.print("Sensor: "); Serial.println(buf);
+            Serial.print("LightSensor: "); Serial.println(buf);
+            break;
+
+         case 'b': // Report temperaturesensor value to the app  
+            intToCharBuf(sensorValue2, buf, 4);                // convert to charbuffer
+            server.write(buf, 4);                              // response is always 4 chars (\n included)
+            Serial.print("TemperatureSensor: "); Serial.println(buf);
             break;
                 
          case '1': //Turns first RF-Switch on or off, also updates the Status (on od off) after a succesful send.
