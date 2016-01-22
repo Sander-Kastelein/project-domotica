@@ -50,7 +50,7 @@ int ethPort = 3300;                                  // Take a free port (check 
 #define ledPin       8  // output, led used for "connect state": blinking = searching; continuously = connected
 #define infoPin      9  // output, more information
 #define analogPin    0  // sensor value (lightsensor)
-#define analogPin    1  // Sensor value (Teamperature sensor)
+#define analogPin    1  // Sensor value (Temperature sensor)
 
 EthernetServer server(ethPort);              // EthernetServer instance (listening on port <ethPort>).
 ActionTransmitter actionTransmitter(RFPin);  // Intantiate a new ActionTransmitter remote, old model, use pin <RFPin>
@@ -59,9 +59,9 @@ bool pinState        = false;            // Variable to store actual pin state
 bool pinChange       = false;            // Variable to store actual pin change
 int  sensorValue     = 0;                // Variable to store actual lightsensor value
 int  sensorValue2    = 0;                // Variable to store actual temperaturesensor value
-int  thresholdValue  = 10;               // Value of the lightsensor at which we decide to turn a switch off in some later situations
-int  thresholdValue2 = 35;               // Value of the lightsensor at which we decide to turn a switch on in some later situations
-
+int  thresholdValue  = 12;               // Value of the lightsensor at which we decide to turn a switch off in some later situations
+int  thresholdValue2 = 16;               // Value of the lightsensor at which we decide to turn a switch on in some later situations
+bool changed = true;
 void setup()
 {
 	 //Init I/O-pins
@@ -165,14 +165,23 @@ void loop()
       sensorValue2 = readSensor(1, 100); 
       Serial.print("TemperatureSensor Value: "); Serial.println(sensorValue2);
 
-      if(sensorValue <= thresholdValue) {
-         sendRF(2379310);
-         status1 = !status1;
+      
+      if(sensorValue <= thresholdValue) { //
+         if(!changed){ 
+          changed = true;                 //
+          sendRF(2379310);                //
+          status1 = !status1;             //
+                         
+         }
+         
       }
       if(sensorValue >= thresholdValue2){
+        if(changed){
+         changed = false;
          sendRF(2379311);
          status1 = !status1; 
-      }
+         
+      }}
 
 
       
