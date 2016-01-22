@@ -76,7 +76,7 @@ namespace Domotica
 
                     if (bytesRead == 4) { 
                         result = Encoding.ASCII.GetString(buffer, 0, bytesRead - 1); // remove \n
-                        if (result == "OFF" || result == " ON") {
+                        if (result == "UIT" || result == "AAN") {
                             mainActivity.UpdateGUI(result, mainActivity.textViewChangePinStateValue);
                         }
 					}

@@ -96,8 +96,20 @@ namespace Domotica
 			// aapt resource value: 0x7f060013
 			public const int SetTimer = 2131099667;
 			
+			// aapt resource value: 0x7f06001b
+			public const int ToggleCMode = 2131099675;
+			
+			// aapt resource value: 0x7f06001d
+			public const int ToggleCMode2 = 2131099677;
+			
 			// aapt resource value: 0x7f06001c
-			public const int abort = 2131099676;
+			public const int ToggleCModeText = 2131099676;
+			
+			// aapt resource value: 0x7f06001e
+			public const int ToggleCModeText2 = 2131099678;
+			
+			// aapt resource value: 0x7f060020
+			public const int abort = 2131099680;
 			
 			// aapt resource value: 0x7f06000c
 			public const int buttonChangePinState = 2131099660;
@@ -120,8 +132,8 @@ namespace Domotica
 			// aapt resource value: 0x7f06000a
 			public const int editTextIPPort = 2131099658;
 			
-			// aapt resource value: 0x7f06001b
-			public const int exit = 2131099675;
+			// aapt resource value: 0x7f06001f
+			public const int exit = 2131099679;
 			
 			// aapt resource value: 0x7f060002
 			public const int relativeLayout1 = 2131099650;
@@ -207,20 +219,32 @@ namespace Domotica
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f04001a
-			public const int Edit_Set_Timer = 2130968602;
-			
-			// aapt resource value: 0x7f040016
-			public const int RFConnect = 2130968598;
-			
-			// aapt resource value: 0x7f040017
-			public const int RFConnect2 = 2130968599;
+			// aapt resource value: 0x7f04001e
+			public const int Edit_Set_Timer = 2130968606;
 			
 			// aapt resource value: 0x7f040018
-			public const int RFConnect3 = 2130968600;
+			public const int RFConnect = 2130968600;
 			
 			// aapt resource value: 0x7f040019
-			public const int Set_Timer = 2130968601;
+			public const int RFConnect2 = 2130968601;
+			
+			// aapt resource value: 0x7f04001a
+			public const int RFConnect3 = 2130968602;
+			
+			// aapt resource value: 0x7f04001d
+			public const int Set_Timer = 2130968605;
+			
+			// aapt resource value: 0x7f040016
+			public const int ToggleCMode = 2130968598;
+			
+			// aapt resource value: 0x7f040017
+			public const int ToggleCMode2 = 2130968599;
+			
+			// aapt resource value: 0x7f04001b
+			public const int ToggleCModeText = 2130968603;
+			
+			// aapt resource value: 0x7f04001c
+			public const int ToggleCModeText2 = 2130968604;
 			
 			// aapt resource value: 0x7f040012
 			public const int abort = 2130968594;

@@ -23,9 +23,13 @@
   <string name="buttonChangeRFState"> Connect RF1 </string>
   <string name="buttonChangeRFState2">Connect RF2</string>
   <string name="buttonChangeRFState3">Connect RF3</string>
+  <string name="ToggleCMode">Toggle C-Mode Normal</string>
+  <string name="ToggleCMode2">Toggle C-Mode First</string>
   <string name="RFConnect">-</string>
   <string name="RFConnect2">-</string>
   <string name="RFConnect3">-</string>
+  <string name="ToggleCModeText">-</string>
+  <string name="ToggleCModeText2">-</string>
   <string name="Set_Timer">Set Time to activate ALL</string>
   <string name="Edit_Set_Timer">00.00.00</string>
 </resources>

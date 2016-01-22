@@ -58,9 +58,9 @@ namespace Domotica
     {
         // Variables (components/controls)
         // Controls on GUI
-        Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3;
+        Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3, ToggleCMode, ToggleCMode2;
         Button buttonChangePinState;
-        TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3;
+        TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3, ToggleCModeText, ToggleCModeText2;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewRFConnectValue;
         EditText editTextIPAddress, editTextIPPort, EditSetTimer;
 
@@ -81,11 +81,15 @@ namespace Domotica
             ChangeRFState = FindViewById<Button>(Resource.Id.buttonChangeRFState);
             ChangeRFState2 = FindViewById<Button>(Resource.Id.buttonChangeRFState2);
             ChangeRFState3 = FindViewById<Button>(Resource.Id.buttonChangeRFState3);
+            ToggleCMode = FindViewById<Button>(Resource.Id.ToggleCMode);
+            ToggleCMode2 = FindViewById<Button>(Resource.Id.ToggleCMode2);
             buttonConnect = FindViewById<Button>(Resource.Id.buttonConnect);
             buttonChangePinState = FindViewById<Button>(Resource.Id.buttonChangePinState);
             RFConnect = FindViewById<TextView>(Resource.Id.RFConnect);
             RFConnect2 = FindViewById<TextView>(Resource.Id.RFConnect2);
             RFConnect3 = FindViewById<TextView>(Resource.Id.RFConnect3);
+            ToggleCModeText = FindViewById<TextView>(Resource.Id.ToggleCModeText);
+            ToggleCModeText2 = FindViewById<TextView>(Resource.Id.ToggleCModeText2);
             textViewTimerStateValue = FindViewById<TextView>(Resource.Id.textViewTimerStateValue);
             textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
             textViewChangePinStateValue = FindViewById<TextView>(Resource.Id.textViewChangePinStateValue);
@@ -109,30 +113,30 @@ namespace Domotica
             this.Title = (connector == null) ? this.Title + " (simple sockets)" : this.Title + " (thread sockets)";
 
             // timer object, running clock
-            timerClock = new System.Timers.Timer() { Interval = 1000, Enabled = true }; // Interval >= 1000
+            timerClock = new System.Timers.Timer() { Interval = 1000, Enabled = true }; // Interval >= 100
             timerClock.Elapsed += (obj, args) =>
             {
-                RunOnUiThread(() => {
-                    textViewTimerStateValue.Text = DateTime.Now.ToString("hh:mm:ss");
+                    RunOnUiThread(() =>
+                    {
+                        textViewTimerStateValue.Text = DateTime.Now.ToString("hh:mm:ss");
+                    });
 
-                    string InsertTimerValue = Convert.ToString(EditSetTimer.Text).Replace(".",":");
-                    if (textViewTimerStateValue.Text == InsertTimerValue)
+                    string InsertTimerValue = Convert.ToString(EditSetTimer.Text).Replace(".", ":");
+                    if (DateTime.Now.ToString("hh:mm:ss") == InsertTimerValue)
                     {
                         executeCommand("1");
                         executeCommand("2");
                         executeCommand("3");
                     }
-
-                });
             };
 
             // timer object, check Arduino state
             // Only one command can be serviced in an timer tick, schedule from list
-            timerSockets = new System.Timers.Timer() { Interval = 1000, Enabled = false }; // Interval >= 750
+            timerSockets = new System.Timers.Timer() { Interval = 150, Enabled = false }; // Interval = 50
             timerSockets.Elapsed += (obj, args) =>
             {
-                //RunOnUiThread(() =>
-                //{
+                RunOnUiThread(() =>
+                {
                 if (socket != null) // only if socket exists
                 {
                     // Send a command to the Arduino server on every tick (loop though list)
@@ -140,7 +144,7 @@ namespace Domotica
                     if (++listIndex >= commandList.Count) listIndex = 0;
                 }
                 else timerSockets.Enabled = false;  // If socket broken -> disable timer
-                //});
+                });
             };
 
             // RF1 aan/uit
@@ -149,7 +153,7 @@ namespace Domotica
 
                 ChangeRFState.Click += (sender, e) =>
                 {
-                    string RFConText = "No respons";  // default text
+                    string RFConText = "Disconnected";  // default text
                     Color color = Color.Red;
                     string state = executeCommand("1");
                     if (state == "AAN")
@@ -165,13 +169,13 @@ namespace Domotica
                         color = Color.Red;
                     }
                     RunOnUiThread(() =>
-           {
-               if (RFConText != null)  // text exists
-               {
-                   RFConnect.Text = RFConText;
-                   RFConnect.SetTextColor(color);
-               }
-           });
+                       {
+                           if (RFConText != null)  // text exists
+                           {
+                               RFConnect.Text = RFConText;
+                               RFConnect.SetTextColor(color);
+                           }
+                       });
                 };
 
                 // RF 2 aan/uit
@@ -179,7 +183,7 @@ namespace Domotica
                 {
                     ChangeRFState2.Click += (sender, e) =>
                     {
-                        string RFConText2 = "No respons";  // default text
+                        string RFConText2 = "Disconnected";  // default text
                         Color color = Color.Red;
                         string state2 = executeCommand("2");
                         if (state2 == "AAN")
@@ -209,7 +213,7 @@ namespace Domotica
                     {
                         ChangeRFState3.Click += (sender, e) =>
                         {
-                            string RFConText3 = "No respons";  // default text
+                            string RFConText3 = "Disconnected";  // default text
                             Color color = Color.Red;                // default color
                             string state3 = executeCommand("3");     // state is send string an received string
                             if (state3 == "AAN")                     // is the received string == "Aan"
@@ -233,44 +237,56 @@ namespace Domotica
                                 }
                             });
                         };
-
-                        //Add the "Connect" button handler.
-                        if (buttonConnect != null)  // if button exists
+                        // C-MODE Normaal aan (Opdracht c)
+                        if (ToggleCMode != null) // if button exists
                         {
-                            buttonConnect.Click += (sender, e) =>
+                            ToggleCMode.Click += (sender, e) =>
                             {
-                                //Validate the user input (IP address and port)
-                                if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
-                                {
-                                    if (connector == null) // -> simple sockets
-                                    {
-                                        ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
-                                    }
-                                    else // -> threaded sockets
-                                    {
-                                        //Stop the thread If the Connector thread is already started.
-                                        if (connector.CheckStarted()) connector.StopConnector();
-                                        connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
-                                    }
-                                }
-                                else UpdateConnectionState(3, "Please check IP");
+                                string state4 = executeCommand("c");
                             };
-                        }
 
-                        //Add the "Change pin state" button handler.
-                        if (buttonChangePinState != null)
-                        {
-                            buttonChangePinState.Click += (sender, e) =>
+                            // C-MODE First aan (Opdracht c)
+                            if (ToggleCMode2 != null) // if button exists
                             {
-                                if (connector == null) // -> simple sockets
+                                ToggleCMode2.Click += (sender, e) =>
                                 {
-                                    socket.Send(Encoding.ASCII.GetBytes("t"));                 // Send toggle-command to the Arduino
-                                }
-                                else // -> threaded sockets
+                                    string state5 = executeCommand("C");
+                                };
+                                //Add the "Connect" button handler.
+                                if (buttonConnect != null)  // if button exists
                                 {
-                                    if (connector.CheckStarted()) connector.SendMessage("t");  // Send toggle-command to the Arduino
+                                    buttonConnect.Click += (sender, e) =>
+                                    {
+                                    //Validate the user input (IP address and port)
+                                    if (CheckValidIpAddress(editTextIPAddress.Text) && CheckValidPort(editTextIPPort.Text))
+                                        {
+                                            if (connector == null) // -> simple sockets
+                                        {
+                                                ConnectSocket(editTextIPAddress.Text, editTextIPPort.Text);
+                                            }
+                                            else // -> threaded sockets
+                                        {
+                                            //Stop the thread If the Connector thread is already started.
+                                            if (connector.CheckStarted()) connector.StopConnector();
+                                                connector.StartConnector(editTextIPAddress.Text, editTextIPPort.Text);
+                                            }
+                                        }
+                                        else UpdateConnectionState(3, "Please check IP");
+                                    };
                                 }
-                            };
+
+                                //Add the "Change pin state" button handler.
+                                if (buttonChangePinState != null)
+                                {
+                                    buttonChangePinState.Click += (sender, e) =>
+                                    {
+                                        if (connector == null) // -> simple sockets
+                                        {
+                                            executeCommand("t");                 // Send toggle-command to the Arduino
+                                        }
+                                    };
+                                }
+                            }
                         }
                     }
                 }
@@ -354,8 +370,8 @@ namespace Domotica
         {
             RunOnUiThread(() =>
             {
-                if (result == "OFF") textview.SetTextColor(Color.Red);
-                else if (result == " ON") textview.SetTextColor(Color.Green);
+                if (result == "UIT") textview.SetTextColor(Color.Red);
+                else if (result == "AAN") textview.SetTextColor(Color.Green);
                 else textview.SetTextColor(Color.Green);  
                 textview.Text = result;
             });
