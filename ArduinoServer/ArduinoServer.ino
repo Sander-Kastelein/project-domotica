@@ -1,134 +1,100 @@
 
-#include <RCSwitch.h>
-
-
-   //booleans
-
-   bool status1 = false;
-   bool status2 = false;
-   bool status3 = false;
-
-
-RCSwitch mySwitch = RCSwitch();
-
 #include <RemoteReceiver.h>
 #include <RemoteTransmitter.h>
-
-// Click-on click-off controler 
-// example with Action device, old model; system code = 31, device = 'A'
-// By Sibbele Oosterhaven, Computer Science NHL, Leeuwarden
-// V1.0, 13/12/2015
-// Hardware: Arduino Uno, Ethernet shield W5100; RF transmitter on RFpin; debug LED for serverconnection on ledPin
-// The Ethernet shield uses pin 10, 11, 12 and 13
-// IP address of server is based on DHCP. No fallback to static IP; use a wireless router
-// Arduino server and smartphone should be in the same network segment (192.168.1.x)
-// 
-// Based on https://github.com/evothings/evothings-examples/blob/master/resources/arduino/arduinoethernet/arduinoethernet.ino.
-//
-// Click-on click-off, Action, new model, codes based on Voorbeelden -> RCSwitch-2-> ReceiveDemo_Simple
-//   on      off       
-// 1 2210415 2210414   replace with your own codes
-// 2 2210413 2210412
-// 3 2210411 2210410
-// 4 2210407 2210406
-// A 2210412 2210401
-
-// Include files.
+#include <RCSwitch.h>
 #include <SPI.h>                  // Ethernet shield uses SPI-interface
 #include <Ethernet.h>             // Ethernet library
-//#include <RemoteTransmitter.h>    // Remote Control (Action, old model)
-#include <RCSwitch.h>             // Remote Control (Action, new model)
 
-//Set Ethernet Shield MAC address  (check yours)
-byte mac[] = { 0x40, 0x6c, 0x8f, 0x36, 0x84, 0x8a }; // Ethernet adapter shield S. Oosterhaven
-int ethPort = 3300;                                  // Take a free port (check your router)
-
+// Preprocessor defines
 #define RFPin        4  // output, pin to control the RF-sender (and Click-On Click-Off-device)
-#define lowPin       5  // output, always LOW
-#define highPin      6  // output, always HIGH
-#define switchPin    7  // input, connected to some kind of inputswitch
 #define ledPin       8  // output, led used for "connect state": blinking = searching; continuously = connected
-#define infoPin      9  // output, more information
 #define analogPin    0  // sensor value (lightsensor)
 #define analogPin    1  // Sensor value (Temperature sensor)
 
-EthernetServer server(ethPort);              // EthernetServer instance (listening on port <ethPort>).
-ActionTransmitter actionTransmitter(RFPin);  // Intantiate a new ActionTransmitter remote, old model, use pin <RFPin>
+#define ethPort      1337 // Network port
+#define mac[]        { 0x01, 0x14, 0xaf, 0x44, 0x7e, 0x01 } // MAC-adres constante, moet uniek zijn (binnen een netwerk).
 
-bool pinState        = false;            // Variable to store actual pin state
-bool pinChange       = false;            // Variable to store actual pin change
-int  sensorValue     = 0;                // Variable to store actual lightsensor value
-int  sensorValue2    = 0;                // Variable to store actual temperaturesensor value
-int  thresholdValue  = 12;               // Value of the lightsensor at which we decide to turn a switch off in some later situations
-int  thresholdValue2 = 16;               // Value of the lightsensor at which we decide to turn a switch on in some later situations
-bool changed = true;
+// "Singletons"
+RCSwitch mySwitch = RCSwitch();
+EthernetServer server(ethPort);              // EthernetServer instance (listening on port <ethPort>).
+
+/* Status van de action-RF-ontvangers
+ *  status1 -> RF-ontvanger 1
+ *  status2 -> RF-ontvanger 2
+ *  status3 -> RF-ontvanger 3
+ */
+bool status1 = false;
+bool status2 = false;
+bool status3 = false;
+
+
+bool pinState = false;                     // Variable to store actual pin state
+
+byte  lightSensorValue = 0;                // Variable to store actual lightsensor value
+byte  temperatureSensorValue = 0;          // Variable to store actual temperaturesensor value
+
+byte  lightSensorMinTresholdValue = 12;    // Value of the lightsensor at which we decide to turn a switch off in some later situations
+byte  lightSensorMaxTresholdValue = 16     // Value of the lightsensor at which we decide to turn a switch on in some later situations
+
+bool  rfReceiverStatusForSensorThreshold = false;
+
 void setup()
 {
-	 //Init I/O-pins
-   pinMode(switchPin, INPUT);            // hardware switch, for changing pin state
-   pinMode(lowPin, OUTPUT);
-   pinMode(highPin, OUTPUT);
+   Serial.begin(9600);
+   Serial.println("Start setup()");
+   
    pinMode(RFPin, OUTPUT);
    pinMode(ledPin, OUTPUT);
-   pinMode(infoPin, OUTPUT);
-   
    //Default states
-   digitalWrite(switchPin, HIGH);        // Activate pullup resistors (needed for input pin)
-   digitalWrite(lowPin, LOW);
-   digitalWrite(highPin, HIGH);
    digitalWrite(RFPin, LOW);
    digitalWrite(ledPin, LOW);
-   digitalWrite(infoPin, LOW);
 
-	 Serial.begin(9600);
-
+   Serial.println("Obtain IP from DHCP server");
 	 //Try to get an IP address from the DHCP server.
 	 if (Ethernet.begin(mac) == 0)
 	 {
 	    Serial.println("Could not obtain IP-address from DHCP -> do nothing");
+      Serial.println("Fix network and reboot arduino");
 		  while (true){     // no point in carrying on, so do nothing forevermore; check your router
+		    delay(1000);    // prevent the microprocessor from being caught on fire!
 		  }
 	 }
 
    Serial.println("Domotica project, Arduino server");
-   Serial.print("RF-transmitter (click-on click-off Device) on pin "); Serial.println(RFPin);
-   Serial.print("LED (for connect-state and pin-state) on pin "); Serial.println(ledPin);
-   Serial.print("Input switch on pin "); Serial.println(switchPin);
+   Serial.println("RF-transmitter (click-on click-off Device) on pin ", RFPin);
+   Serial.println("LED (for connect-state and pin-state) on pin ", ledPin);
    Serial.println("Ethernetboard connected (pins 10, 11, 12, 13 and SPI)");
    Serial.println("Connect to DHCP source in local network (blinking led -> waiting for connection)");
    
 	 //Start the ethernet server.
+   Serial.println("Listening address: ", Ethernet.localIP());
+   Serial.println("Binding to port: ", ethPort);
 	 server.begin();
 
-	 // Print IP-address and led indication of server state
-	 Serial.print("Listening address: ");
-	 Serial.print(Ethernet.localIP());
-   
    // for hardware debug: LED indication of server state: blinking = waiting for connection
    int offset = 0; 
    if (getIPClassB(Ethernet.localIP()) == 1) offset = 100;             // router S. Oosterhaven
    int IPnr = getIPComputerNumberOffset(Ethernet.localIP(), offset);   // Get computernumber in local network 192.168.1.105 -> 5)
-   Serial.print(" ["); Serial.print(IPnr); Serial.print("] "); 
-   Serial.print("  [Testcase: telnet "); Serial.print(Ethernet.localIP()); Serial.print(" "); Serial.print(ethPort); Serial.println("]");
-   
+   Serial.println(" [", IPnr, "] ");
 
-   // Transmitter is connected to Arduino Pin #10 
-   mySwitch.enableTransmit(RFPin 
-   );
+   // Initialise RF-transmiter
+   mySwitch.enableTransmit(RFPin);
    mySwitch.setRepeatTransmit(2);
-   // Optional set pulse length.
-   sendRF(2379297);
-   Serial.println("RF-clear SEND");
-   //turns of switches on start up
- 
+   sendRF(2379297); // Default state -> false -> off. Send signal to turn off all RF-recievers.
+   
+   Serial.println("Done with setup(), going to loop()");
 }
 
  
 void sendRF(long code) //stuurt een betrouwbaarder rf signaal (verbetert resultaat)
 {
-  Serial.print("Sending code");
-  Serial.println(code);
-  
+  Serial.println("Sending code on 433.9MhZ band", code);
+
+  /*
+   * Send code multiple times with delays inbetween
+   * in order to have a greater possibility for the
+   * recievers to recieve the signal.
+   */
   mySwitch.send(code, 24);
   delay(175);
   mySwitch.send(code, 24);
@@ -139,7 +105,7 @@ void sendRF(long code) //stuurt een betrouwbaarder rf signaal (verbetert resulta
 
 void loop()
 {
-  
+   Serial.println("Wating for client to connect...");
    // Listen for incomming connection (app)
 	 EthernetClient ethernetClient = server.available();
 	 if (!ethernetClient) {
@@ -147,59 +113,54 @@ void loop()
 	    return; // wait for connection and blink LED
 	 }
 
-	 Serial.println("Application connected");
-   digitalWrite(ledPin, LOW);
-
-
-        
-   sendRF(2379297);
-
+   Serial.println("Application connected");
+   digitalWrite(ledPin, LOW); 
+     
+   sendRF(2379297); // Send ALL OFF code to RF-recievers 
+   status1 = false;
+   status2 = false;
+   status3 = false;
       
-   // Do what needs to be done while the socket is connected.
+   // Do what needs to be done while the socket is connected. (ominous comment is ominous)
 	 while (ethernetClient.connected()) 
 	 {
-      checkEvent(switchPin, pinState);
-      sensorValue = readSensor(0, 100); 
-      Serial.print("LightSensor Value: "); Serial.println(sensorValue);
-
-      sensorValue2 = readSensor(1, 100); 
-      Serial.print("TemperatureSensor Value: "); Serial.println(sensorValue2);
-
+      /*
+       * This loop executes in a loop as long as
+       * an app is connected with the arduino.
+       */
+      lightSensorValue = readSensor(0, 100); // lightSensorValue =>  [0 -> 99]
+      temperatureSensorValue = readSensor(1, 100); // temperatureSensorValue => [0 -> 99]
       
-      if(sensorValue <= thresholdValue) { //
-         if(!changed){ 
-          changed = true;                 //
-          sendRF(2379310);                //
-          status1 = !status1;             //
-                         
-         }
-         
+      Serial.print("LightSensor Value: ", lightSensorValue);
+      Serial.print("TemperatureSensor Value: ", temperatureSensorValue);
+      
+      /*
+       *  Handle light-sensor values
+       */
+      if(sensorValue <= lightSensorMinTresholdValue && rfReceiverStatusForSensorThreshold)
+      {
+          sendRF(2379310); // Turn OFF rfreciever 1.
+          rfReceiverStatusForSensorThreshold = false;
+          status1 = false;
       }
-      if(sensorValue >= thresholdValue2){
-        if(changed){
-         changed = false;
-         sendRF(2379311);
-         status1 = !status1; 
-         
-      }}
+      else if(sensorValue >= lightSensorMaxTresholdValue)
+      {
+          sendRF(2379311); // Turn ON rfreciever 1.
+          rfReceiverStatusForSensorThreshold = true;
+          status1 = true;
+      }
 
-
-      
-	    // Activate pin based op pinState
-	    if (pinChange) {
-	       if (pinState) { digitalWrite(ledPin, HIGH); actionTransmitter.sendSignal(31,'A',true); }
-   	     else { digitalWrite(ledPin, LOW); actionTransmitter.sendSignal(31,'A',false); }
-         pinChange = false;
-         delay(100); // delay depends on device
-	    }
-   
-	    // Execute when byte is received.
+    
+      /*
+       * Execute command(s) from app
+       */
 	    while (ethernetClient.available())
 	  	{
-	  	   char inByte = ethernetClient.read();   // Get byte from the client.
-	  	   executeCommand(inByte);                // Wait for command to execute
-	   	   //inByte = NULL;                         // Reset the read byte. (reset niet nodig, declaration + overwrite within same scope.)
-	    } 
+	  	   char inByte = ethernetClient.read(); // Get byte from the client.
+         Serial.println("Recieved command: ", inByte);
+	  	   executeCommand(inByte);
+	    }
+     
    }
 	 Serial.println("Application disconnected");
 }
@@ -208,43 +169,50 @@ void loop()
 
 // Implementation of (simple) protocol between app and Arduino
 // Request (from app) is single char ('a', 's', etc.)
-// Response (to app) is 4 chars  (not all commands demand a response)
+// Response (to app) is 4 chars
 void executeCommand(char cmd)
 {     
-         char buf[4] = {'\0', '\0', '\0', '\0'};
+         char response[4] = {'\0', '\0', '\0', '\0'};
 
          // Command protocol
-         Serial.print("["); Serial.print(cmd); Serial.print("] -> ");
+         Serial.print("[");
+         Serial.print(cmd);
+         Serial.print("] -> ");
+         
          switch (cmd) {
          case 'a': // Report lightsensor value to the app  
-            intToCharBuf(sensorValue, buf, 4);                // convert to charbuffer
-            server.write(buf, 4);                             // response is always 4 chars (\n included)
-            Serial.print("LightSensor: "); Serial.println(buf);
+            intToCharBuf(lightSensorValue, response, 4);                // convert to charbuffer
+            server.write(response, 4);                             // response is always 4 chars (\n included)
+            Serial.print("LightSensor: ");
+            Serial.println(response);
             break;
-
          case 'b': // Report temperaturesensor value to the app  
-            intToCharBuf(sensorValue2, buf, 4);                // convert to charbuffer
-            server.write(buf, 4);                              // response is always 4 chars (\n included)
-            Serial.print("TemperatureSensor: "); Serial.println(buf);
+            intToCharBuf(temperatureSensorValue, response, 4);                // convert to charbuffer
+            server.write(response, 4);                              // response is always 4 chars (\n included)
+            Serial.print("TemperatureSensor: ");
+            Serial.println(response);
             break;
                 
          case '1': //Turns first RF-Switch on or off, also updates the Status (on od off) after a succesful send.
             status1 = !status1;
-            if(status1){
+            if(status1)
+            {
               sendRF(2379311);
               server.write("AAN\n"); 
-            }else{
+            }else
+            {
               sendRF(2379310);
               server.write("UIT\n");
             }
-            break;
-            
+            break; 
          case '2': //Turns second RF-Switch on or off, also updates the Status (on od off) after a succesful send.
             status2 = !status2;
-            if(status2){
+            if(status2)
+            {
               sendRF(2379309);
               server.write("AAN\n"); 
-            }else{
+            }else
+            {
               sendRF(2379308);
               server.write("UIT\n");
             }
@@ -252,32 +220,34 @@ void executeCommand(char cmd)
          
          case '3': //Turns third RF-Switch on or off, also updates the Status (on od off) after a succesful send.
             status3 = !status3;
-            if(status3){
+            if(status3)
+            {
               sendRF(2379307);
               server.write("AAN\n"); 
-            }else{
+            }else
+            {
               sendRF(2379306);
               server.write("UIT\n");
             }
             break;
-
-        // case 'l': //Sends Sensor value towards the application user
-         //    server.write(sensorValue"/n")
-           
          case 's': // Report switch state to the app
-            if (pinState) { server.write(" ON\n"); Serial.println("Pin state is ON"); }  // always send 4 chars
-            else { server.write("OFF\n"); Serial.println("Pin state is OFF"); }
+            if (pinState)
+            {
+              Serial.println("Pin state is ON");
+              server.write("AAN\n");
+            }
+            else
+            {
+              Serial.println("Pin state is OFF");
+              server.write("UIT\n");
+            }
             break;
          case 't': // Toggle state; If state is already ON then turn it OFF
-            if (pinState) { pinState = false; Serial.println("Set pin state to \"OFF\""); }
-            else { pinState = true; Serial.println("Set pin state to \"ON\""); }  
-            pinChange = true; 
-            break;
-         case 'i':    
-            digitalWrite(infoPin, HIGH);
-            break;
+            pinState = !pinState; // true -> false, false -> true
+            digitalWrite(ledPin, pinState); // true -> ON, false -> OFF
+            Serial.println("Set pin state to ", pinState);
          default:
-            digitalWrite(infoPin, LOW);
+            server.write("NOP\n"); // No-operation.
          }
 }
 
@@ -298,34 +268,14 @@ void intToCharBuf(int val, char buf[], int len)
    s.toCharArray(buf, len);                // convert string to char-buffer
 }
 
-// Check switch level and determine if an event has happend
-// event: low -> high or high -> low
-void checkEvent(int p, bool &state)
-{
-   static bool swLevel = false;       // Variable to store the switch level (Low or High)
-   static bool prevswLevel = false;   // Variable to store the previous switch level
-
-   swLevel = digitalRead(p);
-   if (swLevel)
-      if (prevswLevel) delay(1);
-      else {               
-         prevswLevel = true;   // Low -> High transition
-         state = true;
-         pinChange = true;
-      } 
-   else // swLevel == Low
-      if (!prevswLevel) delay(1);
-      else {
-         prevswLevel = false;  // High -> Low transition
-         state = false;
-         pinChange = true;
-      }
-}
 
 // blink led on pin <pn>
 void blink(int pn)
 {
-  digitalWrite(pn, HIGH); delay(100); digitalWrite(pn, LOW); delay(100);
+  digitalWrite(pn, HIGH);
+  delay(100);
+  digitalWrite(pn, LOW);
+  delay(100);
 }
 
 // Visual feedback on pin, based on IP number
@@ -334,11 +284,21 @@ void signalNumber(int pin, int n)
 {
    int i;
    for (i = 0; i < 30; i++)
-       { digitalWrite(pin, HIGH); delay(20); digitalWrite(pin, LOW); delay(20); }
+   {
+      digitalWrite(pin, HIGH);
+      delay(20);
+      digitalWrite(pin, LOW);
+      delay(20);
+   }
    delay(1000);
    for (i = 0; i < n; i++)
-       { digitalWrite(pin, HIGH); delay(300); digitalWrite(pin, LOW); delay(300); }
-    delay(1000);
+   {
+      digitalWrite(pin, HIGH);
+      delay(300);
+      digitalWrite(pin, LOW);
+      delay(300);
+   }
+   delay(1000);
 }
 
 // Convert IPAddress tot String (e.g. "192.168.1.105")
@@ -367,5 +327,3 @@ int getIPComputerNumberOffset(IPAddress address, int offset)
 {
     return getIPComputerNumber(address) - offset;
 }
-
-
