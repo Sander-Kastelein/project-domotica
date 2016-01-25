@@ -28,8 +28,6 @@
   <string name="RFConnect">-</string>
   <string name="RFConnect2">-</string>
   <string name="RFConnect3">-</string>
-  <string name="ToggleCModeText">-</string>
-  <string name="ToggleCModeText2">-</string>
-  <string name="Set_Timer">Set Time to activate ALL</string>
+  <string name="Set_Timer">Set Time to activate/deactivate ALL</string>
   <string name="Edit_Set_Timer">00.00.00</string>
 </resources>
