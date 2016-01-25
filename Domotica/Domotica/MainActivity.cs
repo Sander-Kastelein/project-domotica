@@ -60,7 +60,7 @@ namespace Domotica
         // Controls on GUI
         Button buttonConnect, ChangeRFState, ChangeRFState2, ChangeRFState3, ToggleCMode, ToggleCMode2;
         Button buttonChangePinState;
-        TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3, ToggleCModeText, ToggleCModeText2;
+        TextView textViewServerConnect, textViewTimerStateValue, RFConnect, RFConnect2, RFConnect3;
         public TextView textViewChangePinStateValue, textViewSensorValue, textViewSensorValue2, textViewRFConnectValue;
         EditText editTextIPAddress, editTextIPPort, EditSetTimer;
 
@@ -88,8 +88,6 @@ namespace Domotica
             RFConnect = FindViewById<TextView>(Resource.Id.RFConnect);
             RFConnect2 = FindViewById<TextView>(Resource.Id.RFConnect2);
             RFConnect3 = FindViewById<TextView>(Resource.Id.RFConnect3);
-            ToggleCModeText = FindViewById<TextView>(Resource.Id.ToggleCModeText);
-            ToggleCModeText2 = FindViewById<TextView>(Resource.Id.ToggleCModeText2);
             textViewTimerStateValue = FindViewById<TextView>(Resource.Id.textViewTimerStateValue);
             textViewServerConnect = FindViewById<TextView>(Resource.Id.textViewServerConnect);
             textViewChangePinStateValue = FindViewById<TextView>(Resource.Id.textViewChangePinStateValue);
@@ -165,7 +163,7 @@ namespace Domotica
                     else if (state == "UIT")
                     {
                         // Switch 1 staat uit.
-                        RFConText = "disconnected";
+                        RFConText = "Disconnected";
                         color = Color.Red;
                     }
                     RunOnUiThread(() =>
@@ -195,7 +193,7 @@ namespace Domotica
                         else if (state2 == "UIT")
                         {
                             // Switch 1 staat uit.
-                            RFConText2 = "disconnected";
+                            RFConText2 = "Disconnected";
                             color = Color.Red;
                         }
                         RunOnUiThread(() =>
@@ -225,7 +223,7 @@ namespace Domotica
                             else if (state3 == "UIT")
                             {
                                 // Switch 3 staat uit.
-                                RFConText3 = "disconnected";             // Default text when rf3 is off
+                                RFConText3 = "Disconnected";             // Default text when rf3 is off
                                 color = Color.Red;                  // Make the color green
                             }
                             RunOnUiThread(() =>                     // Run this on the User Interface thread (functie)
@@ -370,9 +368,15 @@ namespace Domotica
         {
             RunOnUiThread(() =>
             {
-                if (result == "UIT") textview.SetTextColor(Color.Red);
-                else if (result == "AAN") textview.SetTextColor(Color.Green);
-                else textview.SetTextColor(Color.Green);  
+                if (result == "UIT")
+                {
+                    textview.SetTextColor(Color.Red);
+                }
+                else if (result == "AAN")
+                {
+                    textview.SetTextColor(Color.Green);
+                }
+                else textview.SetTextColor(Color.Green);
                 textview.Text = result;
             });
         }

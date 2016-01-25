@@ -119,9 +119,10 @@
                     android:layout_alignParentRight="true"
                     android:backgroundTint="#00008bff"
                     android:layout_width="153dp"
-                    android:textColor="@android:color/holo_blue_light"
+                    android:textColor="@android:color/white"
                     tools:visibility="visible"
-                    android:background="@android:color/holo_blue_dark" />
+                    android:background="@android:color/holo_blue_dark"
+                    android:backgroundTintMode="add" />
                 <TextView
                     android:text="@string/pin_state_text"
                     android:layout_width="150dp"
@@ -280,16 +281,6 @@
                     android:textColor="@android:color/holo_blue_light"
                     android:background="@android:color/white"
                     android:layout_marginTop="10dp" />
-                <TextView
-                    android:text="@string/ToggleCModeText"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_width="150dp"
-                    android:layout_height="30dp"
-                    android:id="@+id/ToggleCModeText"
-                    android:layout_below="@id/RFConnect3"
-                    android:layout_alignParentRight="true"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:layout_marginTop="10dp" />
                 <Button
                     android:text="@string/ToggleCMode2"
                     android:layout_width="150dp"
@@ -300,16 +291,6 @@
                     android:backgroundTint="#ffffffff"
                     android:textColor="@android:color/holo_blue_light"
                     android:background="@android:color/white"
-                    android:layout_marginTop="10dp" />
-                <TextView
-                    android:text="@string/ToggleCModeText2"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:layout_width="150dp"
-                    android:layout_height="30dp"
-                    android:id="@+id/ToggleCModeText2"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/ToggleCModeText"
-                    android:textColor="@android:color/holo_blue_dark"
                     android:layout_marginTop="10dp" />
             </RelativeLayout>
         </LinearLayout>
