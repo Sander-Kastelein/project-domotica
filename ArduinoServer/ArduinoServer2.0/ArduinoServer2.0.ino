@@ -23,20 +23,20 @@ EthernetServer server(ethPort);              // EthernetServer instance (listeni
  *  status2 -> RF-ontvanger 2
  *  status3 -> RF-ontvanger 3
  */
-bool status1 = false;
-bool status2 = false;
-bool status3 = false;
+bool status1 = false;  //Boolean that keeps track of the status of the first switch
+bool status2 = false;  //Boolean that keeps track of the status of the second switch
+bool status3 = false;  //Boolean that keeps track of the status of the third switch
 
-bool cMode = false;
+bool cMode = false;    //Special mode that is used when we need to be the start of the chain in excercise c.
 
 bool pinState = false;                     // Variable to store actual pin state
-bool rfReceiverStatusForSensorThreshold = false;
+bool rfReceiverStatusForSensorThreshold = false; //When in Cmode, this Boolean is used to keep track of the status of the switch during C-mode
 
 byte  lightSensorValue = 0;                // Variable to store actual lightsensor value
 byte  temperatureSensorValue = 0;          // Variable to store actual temperaturesensor value
 
-byte  lightSensorMinTresholdValue = 12;    // Value of the lightsensor at which we decide to turn a switch off in some later situations
-byte  lightSensorMaxTresholdValue = 16;    // Value of the lightsensor at which we decide to turn a switch on in some later situations
+byte  lightSensorMinTresholdValue = 60;    // Value of the lightsensor at which we decide to turn a switch off in some later situations
+byte  lightSensorMaxTresholdValue = 90;    // Value of the lightsensor at which we decide to turn a switch on in some later situations
 
 void setup()
 {
@@ -80,7 +80,7 @@ void setup()
    if (getIPClassB(Ethernet.localIP()) == 1) offset = 100;             // router S. Oosterhaven
    int IPnr = getIPComputerNumberOffset(Ethernet.localIP(), offset);   // Get computernumber in local network 192.168.1.105 -> 5)
 
-   // Initialise RF-transmiter
+   // Initialise RF-transmitter
    mySwitch.enableTransmit(RFPin);
    mySwitch.setRepeatTransmit(2);
    sendRF(2379297); // Default state -> false -> off. Send signal to turn off all RF-recievers.
@@ -90,7 +90,7 @@ void setup()
 }
 
  
-void sendRF(long code) //stuurt een betrouwbaarder rf signaal (verbetert resultaat)
+void sendRF(long code) //stuurt een meerdere rf signalen (verbetert resultaat)
 {
   Serial.print("Sending code on 433.9MhZ band [");
   Serial.print(code);
@@ -123,7 +123,7 @@ void loop()
 
 
    // RESET states
-   sendRF(2379297); // Send ALL OFF code to RF-recievers 
+   sendRF(2379297); // Send the ALL OFF code to RF-recievers
    status1 = false;
    status2 = false;
    status3 = false;
@@ -184,7 +184,7 @@ void executeCommand(char cmd)
             Serial.println(response);
             break;
                 
-         case '1': //Turns first RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+         case '1': //Turns first RF-Switch on or off, also updates the Status (on or off) after a succesful send.
             status1 = !status1;
             if(status1)
             {
@@ -196,7 +196,7 @@ void executeCommand(char cmd)
               server.write("UIT\n");
             }
             break; 
-         case '2': //Turns second RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+         case '2': //Turns second RF-Switch on or off, also updates the Status (on or off) after a succesful send.
             status2 = !status2;
             if(status2)
             {
@@ -209,7 +209,7 @@ void executeCommand(char cmd)
             }
             break;
          
-         case '3': //Turns third RF-Switch on or off, also updates the Status (on od off) after a succesful send.
+         case '3': //Turns third RF-Switch on or off, also updates the Status (on or off) after a succesful send.
             status3 = !status3;
             if(status3)
             {
@@ -250,20 +250,20 @@ void executeCommand(char cmd)
          case 'c':
             // Normale C-modes
             rfReceiverStatusForSensorThreshold = false;
-            sendRF(2379310);
-            status1 = false;
+            sendRF(2379310); //Turns off Switch 1
+            status1 = false; //Updates the Status of Switch 1
             while(true)
             {
               lightSensorValue = readSensor(analogPinLight, 100); // lightSensorValue =>  [0 -> 99]
 
-              if(!rfReceiverStatusForSensorThreshold && lightSensorValue >= lightSensorMaxTresholdValue)
+              if(!rfReceiverStatusForSensorThreshold && lightSensorValue >= lightSensorMaxTresholdValue) //This turns on our light after enough light is send to our lightsensor, without spamming RF-Signals, if it is succesfull, it sends only that signal.
               {
                 rfReceiverStatusForSensorThreshold = true;
                 sendRF(2379311);
                 status1 = true;
               }
               
-              if(rfReceiverStatusForSensorThreshold && lightSensorValue <= lightSensorMinTresholdValue)
+              if(rfReceiverStatusForSensorThreshold && lightSensorValue <= lightSensorMinTresholdValue) //Once the lightsensor value drops to about the level it was before light was send towards it, this should send the command to switch our light off.
               {
                 sendRF(2379310); // Turn OFF rfreciever 1.
                 rfReceiverStatusForSensorThreshold = false;
@@ -274,19 +274,19 @@ void executeCommand(char cmd)
             server.write("NOP\n");
             break;
          case 'C':
-            // Wij-beginnen-C-modes
-            sendRF(2379311);
+            // We start C mode, so we need to turn on our light first
+            sendRF(2379311); //Turns on our light
             status1 = true;
             
             while(true)
             {
               lightSensorValue = readSensor(analogPinLight, 100); // lightSensorValue =>  [0 -> 99]
 
-              if(lightSensorValue >= lightSensorMaxTresholdValue)
+              if(lightSensorValue >= lightSensorMaxTresholdValue) // Once our sensor reads a significantly higher lightvalue, our Arduino sends the command to turn the light off.
               {
                 sendRF(2379310);
                 status1 = false;
-                break;
+                break;  // We break since after we turn our light off we don't want it to turn on again later.
               }
             }
             server.write("NOP\n");
